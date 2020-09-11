@@ -1,0 +1,98 @@
+{% extends "account/base.html" %} {% load i18n %} {% load account socialaccount %} {% load static %} {% load crispy_forms_tags %} {% block head_title %}{% trans "SignUp" %}{% endblock %} {% block content %}
+<div class="main">
+    <!-- Sign up form -->
+    <section class="">
+        <div class="container">
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <p>{{form.errors}}</p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><i class="flaticon-cancel"></i></span>
+                    </button>
+            </div>
+            {% endif %}
+            <div class="signup-content">
+                <div class="signup-form">
+                    <h2 class="form-title">Sign Up</h2>
+                    <form class="signup user" id="signup_form" method="post" action="{% url 'account_signup' %}" onsubmit="return checkForm(this);">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                            <!-- <input type="text" name="name" id="name" placeholder="Your Name" /> -->
+                            {{form.username}}
+                        </div>
+                        <div class="form-group">
+                            <label for="email"><i class="zmdi zmdi-email"></i></label> {{form.email}}
+                            <!-- <input type="email" name="email" id="email" placeholder="Your Email" /> -->
+                        </div>
+                        <div class="form-group">
+                            <label for="pass"><i class="zmdi zmdi-lock"></i></label> {{form.password1}}
+                            <!-- <input type="password" name="pass" id="pass" placeholder="Password" /> -->
+                        </div>
+                        <div class="form-group">
+                            <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label> {{form.password2}}
+                            <!-- <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" /> -->
+                        </div>
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" /> {% endif %}
+                        <div class="form-group">
+                            <!-- <input type="checkbox" name="agree-term" id="agree-term" class="agree-term">
+                                <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in <a href="#" class="term-service">Terms of service</a></label>-->
+                            <input type="checkbox" name="terms" id="agree-term" class="agree-term">
+                            <label for="agree-term" class="label-agree-term"><span></span>I agree all statements in <a href="#" class="term-service">Terms of service</a></label>
+                        </div>
+                        <div class="form-group form-button">
+                            <input type="submit" name="signup" id="signup" class="form-submit" value="Register">
+                        </div>
+                    </form>
+                </div>
+                <div class="signup-image">
+                    <figure><img src="{% static 'img/signup-image.jpg' %}" alt="sing up image"></figure>
+                    <p>Already have an account? Then please <a href="{{ login_url }}" class="signup-image-link">sign in</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock content %} {% block script %}
+<script>
+    function checkForm(form) {
+        if (!form.terms.checked) {
+            alert("Please indicate that you accept the Terms and Conditions");
+            form.terms.focus();
+            return false;
+        }
+        return true;
+    }
+</script>
+<script>
+    var form_fields = document.getElementsByTagName('input')
+        // form_fields[1].placeholder='First Name';
+        // form_fields[2].placeholder='Last Name';
+        // form_fields[3].placeholder='User Name';
+        // form_fields[4].placeholder='Email Address';
+        // form_fields[5].placeholder='Enter Password';
+        // form_fields[6].placeholder='Re-enter Password';
+
+
+    for (var field in form_fields) {
+        form_fields[field].className += ''
+    }
+</script>
+<script>
+    var form_pass1 = document.getElementsById('id_password1')
+        // form_pass1.placeholder='Enter Password';
+
+    for (var field in form_pass1) {
+        form_pass1[field].placeholderName += 'Enter Password'
+    }
+</script>
+<script>
+    var form_pass2 = document.getElementsById('id_password2')
+        // form_pass2.placeholder='Re-enter Password';
+
+    for (var field in form_pass2) {
+        form_pass2[field].placeholderName += 'Re-enter Password'
+    }
+</script>
+{% endblock script %}

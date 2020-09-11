@@ -1,0 +1,121 @@
+{% extends 'base.html' %} {% load static %}
+{% block content %}
+<!-- <div class="container marketing">
+    <div class="row">
+        <div class="mx-auto" style="width: 200px;">
+            <div class="justify-content-center">
+                {% if user.author %}
+                <img src="{{ user.author.profile_picture.url }}" alt="..." class="img-fluid bd-placeholder-img rounded-circle " width="140 " height="140 ">
+                <h1>Welcome {{request.user.username}}</h1>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{u_form.as_p}}
+                     {{p_form.as_p}}
+                    <button type="submit">Submit</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div> -->
+<div class="container">
+    {% if user.author %}
+    <div class="py-5 text-center">
+        <img class="img-fluid bd-placeholder-img rounded-circle mb-4" src="{{ user.author.profile_picture.url }}" alt="username" width="140 " height="140 ">
+        <h2>{{request.user.username}}</h2>
+    </div>
+    <div class="row justify-content-start">
+        <div class="col-md-10 order-md-2">
+            <form class="needs-validation mb-5" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row justify-content-center">
+                    <div class="col-md-3 mb-3">
+                        <label for="firstName">First name</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            <!-- <input type="text" class="form-control" id="firstName" placeholder="" value=""> -->
+                            <!-- <input type="text" name="first_name" value="Abhijeet" maxlength="30" id="id_first_name"> -->
+                            {{u_form.first_name}}
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="lastName">Last name</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            {{u_form.last_name}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-6 mb-3">
+                        <label for="username">Email</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                            </div>
+                            {{u_form.email}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-3 mb-3">
+                        <label for="Phone Number">Phone Number</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                            </div>
+                            {{p_form.phone_number}}
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="address">Date of Birth</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            {{p_form.date_of_birth}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-6 mb-3">
+                        <label for="address">Choose Image</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-image"></i></span>
+                            </div>
+                        <input type="file" name="profile_picture" class="choose_image " accept="image/*" id="id_profile_picture">
+                </div>
+                </div>
+            </div>
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" type="submit">Update Profile</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+var form_fields = document.getElementsByTagName('input')
+// form_fields[1].placeholder='First Name';
+// form_fields[2].placeholder='Last Name';
+// form_fields[3].placeholder='User Name';
+// form_fields[4].placeholder='Email Address';
+// form_fields[5].placeholder='Enter Password';
+// form_fields[6].placeholder='Re-enter Password';
+
+
+for (var field in form_fields) {
+    form_fields[field].className += 'form-control'
+}
+</script>
+<style type="text/css">
+    .choose_image{
+        height: 44px !important;
+    }
+</style>
+{% endblock content %}

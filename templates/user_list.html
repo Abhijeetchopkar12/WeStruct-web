@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% load avatar_tags %} {% block title %}People{% endblock %}{% load static %} {% block content %}
+
+<div id="people-list">
+    {% for user in users %}
+    <div class="user text-center ">
+        <a href="{% url 'userdetail' user.pk %}">
+            <img src="{{ user.author.profile_picture.url }}" alt="..." width="80" height="80" class="mx-2 img-fluid rounded-circle">
+        </a>
+        <div class="info">
+            <a href="{% url 'userdetail' user.pk %}">{{ user.username }}</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

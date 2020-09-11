@@ -1,0 +1,94 @@
+{% extends "account/base.html" %} {% load i18n %} {% load account socialaccount %} {% load static %} {% load crispy_forms_tags %} {% block head_title %}{% trans "SignIn" %}{% endblock %} {% block content %}
+<div class="main">
+    <!-- Sing in  Form -->
+    <section class="sign-in">
+        <div class="container">
+            {% if form.non_field_errors %} {% for error in form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <p>{{ error }}</p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><i class="flaticon-cancel"></i></span>
+                    </button>
+            </div>
+            {% endfor %} {% endif %}
+            <div class="signin-content">
+                <div class="signin-image">
+                    <figure><img src="{% static 'img/signin-image.jpg' %}" alt="sing up image"></figure>
+                    <p>If you don't have an account? Then please</p>
+                    <a href="{{ signup_url }}" class="signup-image-link">Create an account</a>
+                </div>
+                <div class="signin-form">
+                    <h2 class="form-title">Sign In</h2>
+                    <form class="user" method="POST" action="{% url 'account_login' %}">{% csrf_token %}
+                        <div class="form-group">
+                            <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label> {{form.login}}
+                        </div>
+                        <div class="form-group">
+                            <label for="your_pass"><i class="zmdi zmdi-lock"></i></label> {{form.password}}
+                        </div>
+                        <div class="form-group">
+                            {{form.remember}}
+                            <!-- <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label> -->
+                        </div>
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" /> {% endif %}
+                        <div class="form-group form-button">
+                            <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
+                        </div>
+                        <a class="signup-image-link" href="{% url 'account_reset_password' %}">Forgot Password?</a>
+                    </form>
+                    <div class="social-login">
+                        <span class="social-label">Or login with</span>
+                        <ul class="socials">
+                            <li><a title="Google" href="/accounts/google/login/?process=login" class="socialaccount_provider google"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
+                            <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
+                            <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock content %} {% block script %}
+<script>
+    function checkForm(form) {
+        if (!form.terms.checked) {
+            alert("Please indicate that you accept the Terms and Conditions");
+            form.terms.focus();
+            return false;
+        }
+        return true;
+    }
+</script>
+<script>
+    var form_fields = document.getElementsByTagName('input')
+        // form_fields[1].placeholder='First Name';
+        // form_fields[2].placeholder='Last Name';
+        // form_fields[3].placeholder='User Name';
+        // form_fields[4].placeholder='Email Address';
+        // form_fields[5].placeholder='Enter Password';
+        // form_fields[6].placeholder='Re-enter Password';
+
+
+    for (var field in form_fields) {
+        form_fields[field].className += ''
+    }
+</script>
+<script>
+    var form_pass1 = document.getElementsById('id_password1')
+        // form_pass1.placeholder='Enter Password';
+
+    for (var field in form_pass1) {
+        form_pass1[field].placeholderName += 'Enter Password'
+    }
+</script>
+<script>
+    var form_pass2 = document.getElementsById('id_password2')
+        // form_pass2.placeholder='Re-enter Password';
+
+    for (var field in form_pass2) {
+        form_pass2[field].placeholderName += 'Re-enter Password'
+    }
+</script>
+{% endblock script %}
