@@ -74,6 +74,7 @@ class Comment(models.Model):
     def __str__(self):
         return self.user.username
 
+
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
@@ -125,3 +126,16 @@ class Post(models.Model):
     @property
     def view_count(self):
         return PostView.objects.filter(post=self).count()
+
+
+
+class Contact_us(models.Model):
+    massage_id = models.AutoField(primary_key=True)
+    nmae = models.CharField(max_length=100)
+    email = models.CharField(max_length=50,default="")
+    phone_number = models.CharField(max_length=50,default="")
+    subject = models.CharField(max_length=100,default="")
+    massage = models.CharField(max_length=500, default="")
+
+    def __str__(self):
+        return self.nmae

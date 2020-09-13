@@ -1,7 +1,7 @@
 from django import forms
 from tinymce import TinyMCE
 from django.contrib.auth.models import User
-from .models import Post, Comment, Author
+from .models import Post, Comment, Author, Contact_us
 
 
 class TinyMCEWidget(TinyMCE):
@@ -44,12 +44,18 @@ class CommentForm(forms.ModelForm):
         fields = ('content', )
 
 
-class ContactForm(forms.Form):
+class ContactForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Your Name', 'class': 'form-control'}))
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Your Phone Number', 'class': 'form-control'}))
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Your E-mail', 'class': 'form-control'}))
     subject = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Your Subject', 'class': 'form-control'}))
     message = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Your Message', 'class': 'form-control'}))
+
+    class Meta:
+        model = Contact_us
+        fields = ['name', 'phone_number', 'email', 'subject', 'massage']
+
+
 
 class UserUpdate(forms.ModelForm):
     class Meta:

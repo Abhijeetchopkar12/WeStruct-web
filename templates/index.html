@@ -11,10 +11,11 @@
     </div>
 </section>
 <!-- Intro Section-->
-<section class="intro intro-seg mb-2" id="intro">
+<section class="intro intro-seg mb-2 pt-0 pb-5" id="intro">
     <div class="container">
         <div class="row text-center">
             <div class="col-md-12 col-12">
+                <img src="{% static 'img/WeStruct.png' %}" class="logo p-3" alt="WeStruct">
                 <h2 class="h3">Some great intro here</h2>
                 <p class="text-big">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
             </div>
@@ -25,13 +26,15 @@
     <div class="container">
         <!-- Post-->
         {% for obj in object_list %}
-        <div class="row d-flex align-items-stretch">
+        <!-- <div class="row d-flex align-items-stretch">
             {% if not forloop.first and not forloop.last %}
-            <div class="image col-lg-5"><img src="{{ obj.thumbnail.url }}" alt="..."></div>
+            <div class="image col-lg-5 align-items-center">
+                <img src="{{ obj.thumbnail.url }}" alt="...">
+            </div>
             {% endif %}
             <a href="{{ post.get_absolute_url }}">
                 <div class="text col-lg-7">
-                    <div class="text-inner d-flex align-items-center">
+                    <div class="text-inner d-flex align-items-center p-5 pt-0">
                         <div class="content">
                             <header class="post-header">
                                 <div class="category">
@@ -58,6 +61,47 @@
             {% if forloop.first or forloop.last %}
             <div class="image col-lg-5"><img src="{{ obj.thumbnail.url }}" alt="..."></div>
             {% endif %}
+        </div> -->
+        <div class="row mb-2 justify-content-center">
+            <div class="col-md-8">
+                <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    {% if not forloop.first and not forloop.last %}
+                    <div class="col-auto d-none d-lg-block image">
+                        <img src="{{ obj.thumbnail.url }}" class="m-2" width="200" height="250" alt="...">
+                    </div>
+                    {% endif %}
+                    <a href="{{ post.get_absolute_url }}">
+                        <div class="col p-4 d-flex flex-column position-static">
+                            <header class="post-header">
+                                <div class="category">
+                                    {% for cat in obj.categories.all %}
+                                    <a href="#">
+                                        <h6>{{ cat }}</h6>
+                                    </a> {% endfor %}
+                                </div>
+                                <a href="{{ post.get_absolute_url }}">
+                                    <h2 class="h4">{{ obj.title }}</h2>
+                                </a>
+                            </header>
+                            <p class="card-text mb-2">{{ obj.overview|linebreaks|truncatechars:200 }}</p>
+                            <a href="{{ post.get_absolute_url }}" class="card-text mb-1">Continue reading.......</a>
+                            <div class=" d-flex align-items-center">
+                                <a href="#" class="author d-flex align-items-center flex-wrap">
+                                    <div class="avatar"><img src="{{ obj.author.profile_picture.url }}" alt="..." class="img-fluid"></div>
+                                    <div class="title"><span>{{ obj.author }}</span></div>
+                                </a>
+                                <div class="mb-1 text-muted"><i class="icon-clock"></i> {{ obj.timestamp|timesince }} ago </div>
+                                <div class="comments"><i class=" ml-1 icon-comment"></i>{{ obj.comment_count }}</div>
+                            </div>
+                        </div>
+                    </a>
+                    {% if forloop.first or forloop.last %}
+                    <div class="col-auto d-none d-lg-block">
+                        <img src="{{ obj.thumbnail.url }}" class="m-2" width="200" height="250" alt="...">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>

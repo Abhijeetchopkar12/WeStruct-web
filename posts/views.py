@@ -118,6 +118,14 @@ def profile(request, username):
         
     return render(request, 'profile.html', context)
 
+def contactView(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        form.save()
+        messages.success(request,f'Your message was successfully send')
+    else:    
+        form = ContactForm()
+    return render(request, "contact.html", {'form': form})
 
 # @login_required
 # def profile_update(request):
@@ -144,25 +152,6 @@ def get_author(user):
     if qs.exists():
         return qs[0]
     return None
-
-def contactView(request):
-    if request.method == 'GET':
-        form = ContactForm()
-    else:
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            phone_number = form.cleaned_data['phone_number']
-            email = form.cleaned_data['email']
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
-            try:
-                send_mail(name, subject, message, email, ['abhichopkar12@gmail.com'])
-            except BadHeaderError:
-                return HttpResponse('Invalid header found.')
-            messages.success(request,f'Your message was successfully send')
-
-    return render(request, "contact.html", {'form': form})
 
 
 class SearchView(View):
@@ -252,6 +241,8 @@ def index(request):
         'form': form
     }
     return render(request, 'index.html', context)
+
+
 
 class PostCreateView(CreateView):
     model = Post

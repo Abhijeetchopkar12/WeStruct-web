@@ -67,7 +67,8 @@
     <nav class="navbar navbar-expand-lg ">
         <div class="container">
             <!-- {% static 'vendor/bootstrap/css/bootstrap.min.css' %} -->
-            <a class="navbar-brand" href="/"><img src="{% static 'img/WeStruct.png' %}" width="80" height="80" alt="WeStruct"> </a>
+            <!-- <img src="{% static 'img/WeStruct.png' %}" class="logo" alt="WeStruct"> -->
+            <a class="navbar-brand" href="/">WeStruct </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -83,7 +84,7 @@
                     <li class="nav-item"><a href="{% url 'post-create' %}" class="nav-link ">Create</a>
                     </li>
 
-                    <li class="nav-item"><a href="{% url 'userdetail' user.pk %}" class="nav-link ">My Blog</a></li>
+                    <!-- <li class="nav-item"><a href="{% url 'userdetail' user.pk %}" class="nav-link ">My Blog</a></li> -->
                     <li class="nav-item">
                         <a class="nav-link active" href="{% url 'users_list' %}">Users</a>
                     </li>
@@ -93,10 +94,11 @@
                     {% if request.user.is_authenticated %}
                     <div class="user-panel">
                         <div class="up-item">
-                            <a href="{% url 'profile' user.username %}">
+                            <a href="{% url 'userdetail' user.pk %}">
                                 <img src="{{ user.author.profile_picture.url }}" alt="..." width="30" height="10" class="mx-2 img-fluid rounded-circle">
                             </a>
                             <a href="{% url 'account_logout' %}" class=" p-3 ">Sign Out</a>
+                            <a href="{% url 'password_change' %}" class=" p-3 ">Change Password</a>
                         </div>
                     </div>
                     {% else %}
