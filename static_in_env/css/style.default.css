@@ -15,6 +15,7 @@ Bootstrap Temple Blog Template
 * =====================
 */
 
+
 .text-bold {
     font-weight: 700;
 }
@@ -445,6 +446,7 @@ div[class*="-btn"] {
     nav.navbar .container {
         width: 100%;
     }
+
     .breadcrumb li {
         display: block;
         width: 100%;
@@ -458,6 +460,16 @@ div[class*="-btn"] {
 *     NAVBAR
 * ==========================================================
 */
+
+.navmanu {
+    display: none;
+    padding: 0;
+    margin: 0;
+}
+
+.closebtn {
+    display: none;
+}
 
 .navbar {
     background: #fff;
@@ -609,11 +621,11 @@ div[class*="-btn"] {
 }
 
 .navbar .navbar-nav a.nav-link:hover {
-    color: #999;
+    color: #007bff;
 }
 
 .navbar .navbar-nav a.nav-link.active {
-    color: #999;
+    color: #007bff;
     font-weight: bold;
 }
 
@@ -624,16 +636,63 @@ div[class*="-btn"] {
     nav.navbar .navbar-header {
         width: 100%;
     }
+
     nav.navbar::after {
         width: 100%;
     }
+
     nav.navbar.active::after {
         width: calc(100% - 170px);
     }
+
     nav.navbar .search-area {
         font-size: 0.75em;
     }
+
+    .navmanu {
+        display: block;
+    }
+
+    .sidenav {
+        padding-top: 15px;
+    }
+
+    .sidenav a {
+        font-size: 18px;
+    }
+
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+    }
+
+    .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
 }
+
+
 
 
 /*
@@ -791,10 +850,12 @@ section.featured-posts .post-footer {
         max-height: 300px;
         min-height: auto !important;
     }
+
     section.featured-posts .image img {
         width: 100%;
         height: auto !important;
     }
+
     section.featured-posts .text {
         -webkit-box-ordinal-group: 3;
         -ms-flex-order: 2;
@@ -812,6 +873,7 @@ section.featured-posts .post-footer {
     section.featured-posts .text-inner {
         padding: 15px;
     }
+
     section.featured-posts .post-footer {
         font-size: 0.75em;
     }
@@ -965,6 +1027,7 @@ section.latest-posts header {
     .post {
         margin-bottom: 40px;
     }
+
     .post:last-of-type {
         margin-bottom: 0;
     }
@@ -1013,6 +1076,7 @@ section.newsletter .submit {
         font-size: 0.95em;
         width: 100%;
     }
+
     section.newsletter .submit {
         position: static;
         width: 100%;
@@ -1182,17 +1246,21 @@ footer.main-footer .title::after {
     footer.main-footer div[class*="col-"] {
         margin-bottom: 40px;
     }
+
     footer.main-footer div[class*="col-"]:last-of-type {
         margin-bottom: 0;
     }
+
     footer.main-footer .latest-posts>a {
         width: 100%;
         margin-bottom: 20px;
     }
+
     footer.main-footer .copyrights div[class*="col-"] {
         margin-bottom: 20px;
         text-align: center !important;
     }
+
     footer.main-footer .copyrights div[class*="col-"]:last-of-type {
         margin-bottom: 0;
     }
@@ -1591,6 +1659,7 @@ blockquote.blockquote p {
     .blog-post .title::after {
         display: none !important;
     }
+
     .blog-post .author {
         margin-bottom: 10px;
     }
@@ -1780,37 +1849,6 @@ STYLE SWITCHER FOR DEMO
     background-image: none;
 }
 
-.btn-primary {
-    color: #111;
-    background-color: #999;
-    border-color: #999;
-}
-
-.btn-primary:hover {
-    color: #111;
-    background-color: #868686;
-    border-color: gray;
-}
-
-.btn-primary:focus,
-.btn-primary.focus {
-    -webkit-box-shadow: 0 0 0 3px rgba(153, 153, 153, 0.5);
-    box-shadow: 0 0 0 3px rgba(153, 153, 153, 0.5);
-}
-
-.btn-primary.disabled,
-.btn-primary:disabled {
-    background-color: #999;
-    border-color: #999;
-}
-
-.btn-primary:active,
-.btn-primary.active,
-.show>.btn-primary.dropdown-toggle {
-    background-color: #868686;
-    background-image: none;
-    border-color: gray;
-}
 
 .btn-secondary {
     color: #fff;
@@ -2319,15 +2357,6 @@ STYLE SWITCHER FOR DEMO
  * 3. TYPE
  */
 
-body {
-    font-family: "Open Sans", sans-serif;
-    font-size: 1rem;
-    font-weight: normal;
-    line-height: 1.5;
-    color: #212529;
-    background-color: #fff;
-}
-
 a {
     color: #999;
     text-decoration: none;
@@ -2335,7 +2364,7 @@ a {
 
 a:focus,
 a:hover {
-    color: #737373;
+    color: #0056b3;
     text-decoration: underline;
 }
 
@@ -2449,13 +2478,14 @@ mark,
 }
 
 .text-primary {
-    color: #999 !important;
+    color: #007bff !important
 }
 
 a.text-primary:focus,
 a.text-primary:hover {
-    color: gray !important;
+    color: #0062cc !important
 }
+
 
 
 /*
@@ -2642,14 +2672,13 @@ a.bg-dark:hover {
 }
 
 .text-primary {
-    color: #999 !important;
+    color: #007bff !important
 }
 
 a.text-primary:focus,
 a.text-primary:hover {
-    color: gray !important;
+    color: #0062cc !important
 }
-
 .text-secondary {
     color: #868e96 !important;
 }

@@ -1,118 +1,216 @@
-{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} {% block title %}Profile{% endblock %}{% load static %} {% block content %} {% load avatar_tags %}
-<!-- <div class="container">
-    <div class="row">
-        <main class="posts-listing col-lg-8">
-            <div class="container">
-                <div class="row">
-                    {% for post in queryset %}
-                    <div class="post col-12">
-                        <div class="post-thumbnail">
-                            <a href="{{ post.get_absolute_url }}"><img src="{{ post.thumbnail.url }}" alt="..." class="img-fluid thumbnail"></a>
-                        </div>
-                        <div class="post-details">
-                            <div class="post-meta d-flex justify-content-between">
-                                <div class="category">
-                                    {% for cat in post.categories.all %}
-                                    <a href="#">{{ cat }}</a> {% endfor %}
-                                </div>
-                            </div>
-                            <a href="{{ post.get_absolute_url }}">
-                                <h3 class="h4">{{ post.title }}</h3>
-                            </a>
-                            <p class="text-muted">{{ post.overview }}</p>
-                            <footer class="post-footer d-flex align-items-center">
-                                <a href="" class="author d-flex align-items-center flex-wrap">
-                                    <div class="avatar">
-                                        <img src="{{ post.author.profile_picture.url }}" alt="..." class="img-fluid">
-                                    </div>
-                                    <div class="title"><span>{{ post.author.user.username }}</span></div>
-                                </a>
-                                <div class="date"><i class="icon-clock"></i>{{ post.timestamp|timesince }} ago</div>
-                                <div class="views"><i class="icon-eye"></i> {{ post.view_count }}</div>
-                                <div class="comments meta-last"><i class="icon-comment"></i>{{ post.comment_count }}</div>
-                            </footer>
-                        </div>
-                    </div>
-                    {% endfor %}
+{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} {% block title %}Profile{% endblock %}{% load static %} {% block csslink %}
+<style type="text/css">
+    .choose_image {
+        height: 44px !important;
+    }
+    
+    .verified {
+        height: 25px;
+    }
+    
+    .profile-info-section {
+        padding: 24px;
+        background: #eaeaea;
+        border-radius: 8px;
+    }
+    
+    .content-section {
+        position: relative;
+        margin-bottom: 40px;
+    }
+    
+    @media (min-width: 768px) {
+        .medium-screens-only {
+            display: block;
+        }
+    }
+    
+    .post {
+        background: #fff;
+    }
+    
+    .city {
+        text-transform: capitalize;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="{% static 'css/style_profile.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"> {% endblock csslink %} {% block content %} {% load avatar_tags %}
+<div class="main-content">
+    <!-- Header -->
+    {% for person_data in profile %}
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url({{ person_data.cover_picture.url }}); background-size: cover; background-position: center top;">
+        <!-- Mask -->
+        <span class="mask bg-gradient-default opacity-8"></span>
+        <!-- Header container -->
+        <div class="container-fluid d-flex align-items-center">
+            <div class="row">
+                <div class="col-lg-7 col-md-10">
+                    <!-- <h1 class="display-2 text-white city">Hello {% if person.first_name %} {{person.first_name}}</span> {% else %}{{person.username}} {%endif%}</h1> -->
+                    <!-- <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made with your work and manage your projects or assigned tasks</p> -->
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-</div> -->
-<div class="my-3 my-md-5">
-    <div class="container">
+    <!-- Page content -->
+    <div class="container-fluid mt--7">
         <div class="row">
-            <div class="col-lg-5">
-                <div class="card card-profile">
-                    <div class="card-body text-center">
-                        {% for person_data in profile %}
-                        <img class="rounded-circle img-fluid" alt="..." width="100" height="100" src="{{ person_data.profile_picture.url }}"> {% if person_data.bio != none %}
-                        <p class="h6 text-dark my-1">{{ person_data.bio }}</p>
-                        {% endif %} {% endfor %}
-                    </div>
 
-                    {% with total_followers=person.followers.count %}
-                    <div class="btn-group justify-content-center mb-2 text-center" role="group" aria-label="Basic example">
-                        <h4 class="text-primary col-5 mr-1"><span>
-                            <span >{{ total_followers }}</span> follower{{ total_followers|pluralize }}</span>
-                        </h4> {% if request.user.pk != person.pk %}
-                        <a class="btn btn-primary buttons follow-btn col-5 ml-1" href="{% url 'user_follow' person.id %}" data-id="{{ person.id }}" data-action="follow">{% if request.user not in person.followers.all %}Follow{% else %}Unfollow{% endif %}</a>                        {%endif%}
-                    </div>
-                    {% endwith %}
-                    <ul class="list-group">
-                        <li class="list-group-item"><span class="h4 text-primary">UserName:  </span> <span class="h5">{{person.username}}</span></li>
-                        <li class="list-group-item"><span class="h4 text-primary">FirstName:  </span> <span class="h5">{{ person.first_name }}</span></li>
-                        <li class="list-group-item"><span class="h4 text-primary">LastName:  </span> <span class="h5">{{ person.last_name}}</span></li>
-                        <li class="list-group-item"><span class="h4 text-primary">Email:  </span> <span class="h5">{{ person.email }}</span></li>
-                        {% for person_data in profile %} {% if person_data.phone_number != none %}
-                        <li class="list-group-item"><span class="h4 text-primary">Phone Number:  </span> <span class="h5">{{ person_data.phone_number }}</span></li>
-                        {%endif%} {% if person_data.date_of_birth != none %}
-                        <li class="list-group-item"><span class="h4 text-primary">Date of Birth:  </span> <span class="h5">{{ person_data.date_of_birth }}</span></li>
-                        {%endif%} {% endfor %}
-                    </ul>
-                    {% if request.user.pk == person.pk %}
-                    <a class="btn btn-primary " href="{% url 'profile' user.username %}">Edit your Profile</a> {% endif %}
-                </div>
-            </div>
-            <div class="col-lg-7">
-                <div class="post col-12 justify-content-center text-center">
-                    {% if request.user.pk == person.pk %}
-                    <a href="{% url 'post-create' %}" class="btn btn-primary col-10">Create Blog</a> {% endif %}
-                </div>
-                {% for post in queryset %}
-                <div class="post col-12 my-2">
-                    <div class="post-thumbnail">
-                        <a href="{{ post.get_absolute_url }}"><img src="{{ post.thumbnail.url }}" alt="..." class="img-fluid thumbnail"></a>
-                    </div>
-                    <div class="post-details">
-                        <div class="post-meta d-flex justify-content-between">
-                            <div class="category">
-                                {% for cat in post.categories.all %}
-                                <a href="#">{{ cat }}</a> {% endfor %}
+            <div class="col-xl-4 order-xl-1 mb-5 mb-xl-0">
+                <div class="card card-profile shadow">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-3 order-lg-2">
+                            <div class="card-profile-image">
+                                <img src="{{ person_data.profile_picture.url }}" class="rounded-circle">
                             </div>
                         </div>
-                        <a href="{{ post.get_absolute_url }}">
-                            <h3 class="h4">{{ post.title }}</h3>
-                        </a>
-                        <p class="text-muted">{{ post.overview }}</p>
-                        <footer class="post-footer d-flex align-items-center">
-                            <a href="" class="author d-flex align-items-center flex-wrap">
-                                <div class="avatar">
-                                    <img src="{{ post.author.profile_picture.url }}" alt="..." class="img-fluid">
+                    </div>
+                    <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                        <!-- <div class="d-flex justify-content-between">
+                            <a href="#" class="btn btn-sm btn-info mr-4">Connect</a>
+                            <a href="#" class="btn btn-sm btn-default float-right">Message</a>
+                        </div> -->
+                    </div>
+                    <div class="card-body pt-0 pt-md-4">
+                        {% with total_followers=person.followers.count %}
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                                    <div>
+                                        <span class="heading">{{ total_followers }} </span>
+                                        <span class="description">Followers</span>
+                                    </div>
+                                    <!-- <div>
+                                        <span class="heading">10</span>
+                                        <span class="description">Photos</span>
+                                    </div>
+                                    <div>
+                                        <span class="heading">89</span>
+                                        <span class="description">Comments</span>
+                                    </div> -->
                                 </div>
-                                <div class="title"><span>{{ post.author.user.username }}</span></div>
-                            </a>
-                            <div class="date"><i class="icon-clock"></i>{{ post.timestamp|timesince }} ago</div>
-                            <div class="views"><i class="icon-eye"></i> {{ post.view_count }}</div>
-                            <div class="comments meta-last"><i class="icon-comment"></i>{{ post.comment_count }}</div>
-                        </footer>
+                            </div>
+                        </div>
+                        {% if request.user.pk != person.pk %}
+                        <div class="d-flex justify-content-center my-4">
+                            {% if request.user not in person.followers.all %}
+                            <a href="{% url 'user_follow' person.id %}" data-id="{{ person.id }}" data-action="follow" class="btn btn-sm btn-info">Follow</a> {% else %}
+                            <a href="{% url 'user_follow' person.id %}" data-id="{{ person.id }}" data-action="follow" class="btn btn-sm btn-default float-right">Unfollow</a> {% endif %}
+                        </div>
+                        {%endif%} {% endwith %}
+                        <div class="text-center" id="userdetail">
+                            <h3>
+                                {{person.username}} <span class="font-weight-light">{% if person.verified_tick  %}<img src="{% static 'img/verified.svg' %}" class="verified" alt="verified">{% endif %}</span>
+                            </h3>
+                            <div class="h5 font-weight-300">
+                                <i class="ni location_pin mr-2"></i>{% if person_data.city != none %}
+                                <span class="city"> {{ person_data.city }} </span> {%endif%}
+                            </div>
+                            <div class="h5 mt-4">
+                                {% if person_data.professionals_check == True %}
+                                <span class=" city"><strong>Profession :</strong> {{ person_data.professionals }}</span> {%endif%}
+                                {% if person_data.student_check == True%}
+                                <span class=" city"><strong>Student :</strong> {{ person_data.student }}  </span>
+                                {%endif%}
+                            </div>
+                            <hr class="my-4"> {% if person_data.bio != none %}
+                            <p>{{ person_data.bio }}</p>
+                            {% endif %}
+                            <section class="content-section profile-info-section medium-screens-only">
+                                <hr class="my-4"> {% if person_data.address != none %}
+                                <p class="info-item location">
+                                    <span class="city"> <i class="fa fa-map-marker" aria-hidden="true"></i> {{ person_data.address }},
+                                        {% if person_data.city != none %}
+                                        <span class="city"> {{ person_data.city }}, </span> {%endif%} {% if person_data.postal_code != none %}
+                                    <span>{{ person_data.postal_code }}</span> {%endif%}
+                                    </span>
+                                </p>
+                                {%endif%}
+                                <p class="info-item created">
+                                    <span>Member since - {{person.date_joined|date}}</span>
+                                </p>
+                                <hr class="my-4">
+                                <h3 class="">User Details</h3>
+                                <div class="form-group focused">
+                                    <p class="form-control-label" for="input-username">Username - <span><b>{{person.username}}</b></span></p>
+                                    <p class="form-control-label" for="input-username">Email address - <span><b>{{ person.email }}</b></span></p>
+                                    <p class="form-control-label" for="input-username">First name - <span><b>{{ person.first_name }}</b></span></p>
+                                    <p class="form-control-label" for="input-username">Last name - <span><b>{{ person.last_name}}</b></span></p>
+                                    {% if person_data.phone_number != none %}
+                                    <p class="form-control-label" for="input-username">Phone Number - <span><b>+91 {{ person_data.phone_number }}</b></span></p>
+                                    {% endif %} {% if person_data.date_of_birth != none %}
+                                    <p class="form-control-label" for="input-username">Date of Birth - <span><b>{{ person_data.date_of_birth }}</b></span></p>
+                                    {%endif%}
+                                </div>
+                                <hr class="my-4">
+                            </section>
+                        </div>
                     </div>
                 </div>
-                {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="col-xl-8 order-xl-2">
+                <div class="card shadow">
+                    <div class="card-header bg-white border-0">
+                        {% if request.user.pk == person.pk %}
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">My account</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                                <a href="{% url 'post-create' %}" class="btn btn-sm btn-info">Create Blog</a>
+                                <a href="{% url 'profile' user.username %}" class="btn btn-sm btn-primary">Edit profile</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div id="posts">
+                            {% for post in queryset %}
+                            <div class="post col-12 py-2 my-2">
+                                <div class="post-thumbnail" style="text-align: center;">
+                                    <a href="{{ post.get_absolute_url }}"><img src="{{ post.thumbnail.url }}" alt="..." class="img-fluid thumbnail py-2"></a>
+                                </div>
+                                <div class="post-details">
+                                    <div class="post-meta d-flex justify-content-between">
+                                        <div class="category">
+                                            {% for cat in post.categories.all %}
+                                            <a href="#">{{ cat }}</a> {% endfor %}
+                                        </div>
+                                    </div>
+                                    <a href="{{ post.get_absolute_url }}">
+                                        <h3 class="h4">{{ post.title }}</h3>
+                                    </a>
+                                    <p class="text-muted">{{ post.overview|linebreaks|truncatechars:200 }}</p>
+                                    <footer class="post-footer d-flex align-items-center">
+                                        <a href="" class="author d-flex align-items-center flex-wrap">
+                                            <div class="avatar">
+                                                <img src="{{ post.author.profile_picture.url }}" alt="..." class="img-fluid">
+                                            </div>
+                                            <div class="title"><span>{{ post.author.user.username }}</span></div>
+                                        </a>
+                                        <div class="date"><i class="icon-clock"></i>{{ post.timestamp|timesince }} ago</div>
+                                        <div class="views"><i class="icon-eye"></i> {{ post.view_count }}</div>
+                                        <div class="comments meta-last"><i class="icon-comment"></i>{{ post.comment_count }}</div>
+                                    </footer>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %} {% block script %}
+<!-- <script type="text/javascript">
+function edit_profile() {
+  document.getElementById("posts").style.display = "none";
+  document.getElementById("edit").style.display = "block";
+
+}
+</script> -->
+
 <script>
     var form_fields = document.getElementsByTagName('input')
         // form_fields[1].placeholder='First Name';
@@ -124,13 +222,7 @@
 
 
     for (var field in form_fields) {
-        form_fields[field].className += 'form-control'
+        form_fields[field].className += 'form-control form-control-alternative'
     }
 </script>
-<style type="text/css">
-    .choose_image {
-        height: 44px !important;
-    }
-</style>
-
-{% endblock %}
+{% endblock script %}

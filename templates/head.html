@@ -3,10 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %}WeStruct{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
+    <title>{% block title %}WeStruct{% endblock %}</title>
+
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/fontastic.css' %}">
@@ -163,5 +165,13 @@
         img.logo {
             height: 14rem;
         }
+        
+        .dropdown-menu {
+            left: auto !important;
+        }
+        
+        .img-verified {
+            max-width: 30px;
+            height: 30px;
+        }
     </style>
-</head>

@@ -16,7 +16,7 @@ SECRET_KEY = 'k*b$$!%hiswnhp2pad)6(u4x_g)r5w%@&zlv&@2hrz4#f3+#57'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '134.209.224.211']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.43.72', 'westruct.in', '13.233.87.255']
 
 # Application definition
 
@@ -31,6 +31,8 @@ INSTALLED_APPS = [
 
     'allauth',
     'avatar',
+    'taggit',
+    'django_filters',
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
     'tinymce',
+    'django_social_share',
 
     'actions',
     'marketing',
@@ -150,34 +153,7 @@ EMAIL_HOST_USER = 'abhijeetchopkar35@gmail.com'
 EMAIL_HOST_PASSWORD = '@Bhijeet100$'
 EMAIL_PORT = 587
 
-# Tinymce
-
-TINYMCE_DEFAULT_CONFIG = {
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 20,
-    'selector': 'textarea',
-    'theme': 'modern',
-    'plugins': '''
-            textcolor save link image media preview codesample contextmenu
-            table code lists fullscreen  insertdatetime  nonbreaking
-            contextmenu directionality searchreplace wordcount visualblocks
-            visualchars code fullscreen autolink lists  charmap print  hr
-            anchor pagebreak
-            ''',
-    'toolbar1': '''
-            fullscreen preview bold italic underline | fontselect,
-            fontsizeselect  | forecolor backcolor | alignleft alignright |
-            aligncenter alignjustify | indent outdent | bullist numlist table |
-            | link image media | codesample |
-            ''',
-    'toolbar2': '''
-            visualblocks visualchars |
-            charmap hr pagebreak nonbreaking anchor |  code |
-            ''',
-    'contextmenu': 'formats | link image',
-    'menubar': True,
-    'statusbar': True,
-}
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 MAILCHIMP_API_KEY = ''
 MAILCHIMP_DATA_CENTER = ''

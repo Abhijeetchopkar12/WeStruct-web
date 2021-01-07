@@ -5,6 +5,9 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.text import slugify
+from taggit.managers import TaggableManager
+
 import datetime
 
 User = get_user_model()
@@ -37,15 +40,47 @@ User.add_to_class('following',
                                          related_name='followers',
                                          symmetrical=False))
 
+class Designation(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.title
+
+
+class Professionals(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.title
+
+class Student(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=500)
+    
+    def __str__(self):
+        return self.title
+    
 
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(default='user.png')
+    cover_picture = models.ImageField(default='cover_image.jpg', null=True, blank=True)
+    designation = models.OneToOneField(Designation, related_name='designation', on_delete=models.CASCADE, null=True, blank=True)
+    professionals_check = models.BooleanField(default=False)
+    student_check = models.BooleanField(default=False)
+    user_check = models.BooleanField(default=False)
+    professionals  = models.OneToOneField(Professionals, related_name='professionals', on_delete=models.CASCADE, null=True, blank=True)
+    student = models.OneToOneField(Student, related_name='student', on_delete=models.CASCADE, null=True, blank=True)
     bio = models.CharField(max_length=150, null=True, blank=True)
     phone_number = models.CharField(max_length=10, null=True, blank=True)
+    address =  models.CharField(max_length=1000, null=True, blank=True)
+    city = models.CharField(max_length=1000, null=True, blank=True)
+    postal_code = models.IntegerField(null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    rating = models.IntegerField(default=0)
+    verified_tick = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
-    profile_picture = models.ImageField(default='user.png')
 
 
     def __str__(self):
@@ -58,10 +93,26 @@ class Author(models.Model):
         instance.author.save()
 
 class Category(models.Model):
-    title = models.CharField(max_length=20)
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(null=True, blank=True, unique=True)
 
     def __str__(self):
         return self.title
+
+    def _get_unique_slug(self):
+        slug = slugify(self.title)
+        unique_slug = slug
+        num = 1
+        while Category.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
+ 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super().save(*args, **kwargs)
+
 
 
 class Comment(models.Model):
@@ -75,6 +126,7 @@ class Comment(models.Model):
         return self.user.username
 
 
+
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
@@ -84,6 +136,7 @@ class Post(models.Model):
     rating = models.IntegerField(default=0)
     thumbnail = models.ImageField()
     categories = models.ManyToManyField(Category)
+    tags = TaggableManager()
     featured = models.BooleanField(default=True)
     Date = models.DateTimeField(auto_now_add=True)
     previous_post = models.ForeignKey(

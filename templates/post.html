@@ -1,97 +1,285 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %}
+<!-- {% load social_share %} -->
+{% load static %}{% block csslink %}
+<link rel="stylesheet" href="{% static 'css/style-post.css' %}">
+<style type="text/css">
+.search1 input {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95em;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    background: none;
+}
 
+.search1 .submit {
+    height: 40px;
+    padding: 0;
+    line-height: 40px;
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 0.9em;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.img-pro {
+    width: 30px;
+}
+
+.date {
+    font-size: 12px;
+}
+
+.sidebar-box {
+    background: #f7f7f7 !important;
+    padding: 1rem !important;
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+    top: 88px !important;
+}
+</style>
 <style>
-    .post-body img {
-        width: 100%;
+    .fa:hover {
+        opacity: 0.7;
+    }
+    
+    .fa-facebook {
+        background: #3B5998;
+        color: white;
+    }
+    
+    .fa-twitter {
+        background: #55ACEE;
+        color: white;
+    }
+    
+    .fa-envelope {
+        background: #dd4b39;
+        color: white;
+    }
+    
+    .fa-linkedin_in {
+        background: #007bb5;
+        color: white;
+    }
+    
+    .fa-youtube {
+        background: #bb0000;
+        color: white;
+    }
+    
+    .fa-instagram_inta {
+        background: #125688;
+        color: white;
+    }
+    
+    .pinterest-this span {
+        background: #cb2027 !important;
+        color: white !important;
+    }
+    
+    .fa-snapchat-ghost {
+        background: #fffc00;
+        color: white;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    }
+    
+    .fa-skype {
+        background: #00aff0;
+        color: white;
+    }
+    
+    .fa-android {
+        background: #a4c639;
+        color: white;
+    }
+    
+    .fa-dribbble {
+        background: #ea4c89;
+        color: white;
+    }
+    
+    .fa-vimeo {
+        background: #45bbff;
+        color: white;
+    }
+    
+    .fa-tumblr {
+        background: #2c4762;
+        color: white;
+    }
+    
+    .fa-vine {
+        background: #00b489;
+        color: white;
+    }
+    
+    .fa-foursquare {
+        background: #45bbff;
+        color: white;
+    }
+    
+    .fa-stumbleupon {
+        background: #eb4924;
+        color: white;
+    }
+    
+    .fa-flickr {
+        background: #f40083;
+        color: white;
+    }
+    
+    .fa-yahoo {
+        background: #430297;
+        color: white;
+    }
+    
+    .fa-soundcloud {
+        background: #ff5500;
+        color: white;
+    }
+    
+    .fa-reddit {
+        background: #ff5700;
+        color: white;
+    }
+    
+    .fa-rss {
+        background: #ff6600;
+        color: white;
+    }
+    
+    .fa-whatsapp {
+        background: green;
+        color: #fff;
+    }
+    
+    .fa-telegram {
+        background: #2f89fc;
+        color: #fff;
+    }
+    
+    .shareicon i {
+        padding: 9px;
+        font-size: 21px;
     }
 </style>
-
-<div class="container">
-    <div class="row">
-        <!-- Latest Posts -->
-        <main class="post blog-post col-lg-8">
-            <div class="container">
-                <div class="post-single">
-                    <div class="post-thumbnail"><img src="{{ post.thumbnail.url }}" alt="..." class="img-fluid"></div>
-                    <div class="post-details">
-                        <div class="post-meta d-flex justify-content-between">
-                            <div class="category">
-                                {% for cat in post.categories.all %}
-                                <a href="#">{{ cat }}</a> {% endfor %}
+{% endblock csslink %} {% block content %}
+<div class="site-wrap">
+    <!-- {% static '' %} -->
+    <div class="site-cover site-cover-sm same-height overlay single-page" style="background-image: url('{{ post.thumbnail.url }}'); background-position: center; background-repeat: no-repeat;">
+        <div class="container">
+            <div class="row same-height justify-content-center">
+                <div class="col-md-12 col-lg-10">
+                    <div class="post-entry text-center">
+                        <h1 class="mb-4">{{ post.title }}</h1>
+                        <div class="post-meta align-items-center text-center">
+                            <figure class="author-figure mb-0 mr-3 d-inline-block">
+                                <a href="{% url 'userdetail' post.author.user.pk %}">
+                                    <img src="{{ post.author.profile_picture.url }}" alt="Image" class="img-fluid">
+                                </a>
+                            </figure>
+                            <span class="d-inline-block mt-1">By
+                                <a href="{% url 'userdetail' post.author.user.pk %}">
+                                    {{ post.author.user.username }}
+                                </a>
+                            </span>
+                            <span>&nbsp;-&nbsp; <i class="icon-clock"></i> {{ post.timestamp|timesince }} ago</span>
+                            <span>&nbsp;-&nbsp; <i class="icon-eye"></i> {{ post.view_count }}</span>
+                            <span>&nbsp;-&nbsp; <i class="icon-comment"></i> {{ post.comment_count }}</span>
+                            <span>&nbsp;-&nbsp;
+                                <a class="" data-toggle="modal" data-target="#share"><i class="fa fa-share-alt-square fa-2" aria-hidden="true"></i></a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="site-section py-lg">
+        <div class="container">
+            <div class="row blog-entries element-animate">
+                <div class="col-md-12 col-lg-8 main-content">
+                    {% if post.author.user == user %}
+                    <div class="btn-group text-left">
+                        <a href="{% url 'post-update' pk=post.pk %}" class="btn btn-sm btn-outline-secondary">Update</a>
+                        <a href="{% url 'post-delete' pk=post.pk %}" class="btn btn-sm btn-outline-secondary">Delete</a>
+                    </div>
+                    {% endif %}
+                    <div class="post-content-body">
+                        {{ post.content | safe }}
+                    </div>
+                    <div class="pt-5">
+                        <p>Categories: {% for cat in post.categories.all %}
+                            <a href="#">{{ cat }}</a> {% endfor %}
+                        </p>
+                    </div>
+                    <div class="posts-nav d-flex justify-content-between align-items-stretch flex-column flex-md-row">
+                        {% if post.previous_post %}
+                        <a href="{{ post.previous_post.get_absolute_url }}" class="prev-post text-left d-flex align-items-center">
+                            <div class="icon prev"><i class="fa fa-angle-left"></i></div>
+                            <div class="text"><strong class="text-primary">Previous Post </strong>
+                                <h6>{{ post.previous_post.title }}</h6>
                             </div>
-                            {% if post.author.user == user %}
-                            <div class="text-primary">
-                                <a href="{% url 'post-update' pk=post.pk %}">Update</a>
-                                <a href="{% url 'post-delete' pk=post.pk %}">Delete</a>
+                        </a>
+                        {% endif %} {% if post.next_post %}
+                        <a href="{{ post.next_post.get_absolute_url }}" class="next-post text-right d-flex align-items-center justify-content-end">
+                            <div class="text"><strong class="text-primary">Next Post </strong>
+                                <h6>{{ post.next_post.title }}</h6>
                             </div>
-                            {% endif %}
-                        </div>
-                        <h1>{{ post.title }}<a href="#"><i class="fa fa-bookmark-o"></i></a></h1>
-                        <div class="post-footer d-flex align-items-center flex-column flex-sm-row">
-                            <a href="#" class="author d-flex align-items-center flex-wrap">
-                                <div class="avatar"><img src="{{ post.author.profile_picture.url }}" alt="..." class="img-fluid"></div>
-                                <div class="title"><span>{{ post.author.user.username }}</span></div>
-                            </a>
-                            <div class="d-flex align-items-center flex-wrap">
-                                <div class="date"><i class="icon-clock"></i> {{ post.timestamp|timesince }} ago</div>
-                                <div class="views"><i class="icon-eye"></i> {{ post.view_count }}</div>
-                                <div class="comments meta-last"><i class="icon-comment"></i>{{ post.comment_count }}</div>
-                            </div>
-                        </div>
-                        <div class="post-body">
-                            {{ post.content | safe }}
-                        </div>
-                        <div class="posts-nav d-flex justify-content-between align-items-stretch flex-column flex-md-row">
-                            {% if post.previous_post %}
-                            <a href="{{ post.previous_post.get_absolute_url }}" class="prev-post text-left d-flex align-items-center">
-                                <div class="icon prev"><i class="fa fa-angle-left"></i></div>
-                                <div class="text"><strong class="text-primary">Previous Post </strong>
-                                    <h6>{{ post.previous_post.title }}</h6>
-                                </div>
-                            </a>
-                            {% endif %} {% if post.next_post %}
-                            <a href="{{ post.next_post.get_absolute_url }}" class="next-post text-right d-flex align-items-center justify-content-end">
-                                <div class="text"><strong class="text-primary">Next Post </strong>
-                                    <h6>{{ post.next_post.title }}</h6>
-                                </div>
-                                <div class="icon next"><i class="fa fa-angle-right">   </i></div>
-                            </a>
-                            {% endif %}
-                        </div>
-                        <div class="post-comments">
-                            <header>
-                                <h3 class="h6">Post Comments<span class="no-of-comments">({{ post.comments.count }})</span></h3>
-                            </header>
-                            {% for comment in post.get_comments %}
-                            <div class="comment">
-                                <div class="comment-header d-flex justify-content-between">
-                                    <div class="user d-flex align-items-center">
-                                        <div class="image">
-                                            {% if comment.user.author %}
-                                            <img src="{{ comment.user.author.profile_picture.url }}" alt="..." class="img-fluid rounded-circle"> {% else %}
-                                            <img src="{% static 'img/user.svg' %}" alt="..." class="img-fluid rounded-circle"> {% endif %}
-                                        </div>
-                                        <div class="title"><strong>{{ comment.user.username }}</strong><span class="date">{{ comment.timestamp|timesince }} ago</span></div>
+                            <div class="icon next"><i class="fa fa-angle-right"> </i></div>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="pt-5">
+                        <h3 class="mb-5"><span class="no-of-comments">({{ post.comments.count }})</span> Comments</h3>
+                        {% for comment in post.get_comments %}
+                        <div class="comment">
+                            <div class="comment-header d-flex justify-content-between">
+                                <div class="user d-flex align-items-center">
+                                    <div class="image">
+                                        <a href="{% url 'userdetail' comment.user.author.user.pk %}">
+                                            <img src="{{ comment.user.author.profile_picture.url }}" alt="..." class="img-fluid rounded-circle img-pro mx-1">
+                                        </a>
+                                    </div>
+                                    <div class="title">
+                                        <a href="{% url 'userdetail' comment.user.author.user.pk %}">
+                                            <strong>{{ comment.user.username }}</strong>
+                                        </a>
+                                        <span class="date">{{ comment.timestamp|timesince }} ago</span>
                                     </div>
                                 </div>
-                                <div class="comment-body">
-                                    <p>{{ comment.content }}</p>
-                                </div>
                             </div>
-                            {% endfor %}
+                            <div class="comment-body">
+                                <p>{{ comment.content }}</p>
+                            </div>
                         </div>
-                        {% if request.user.is_authenticated %}
+                        {% endfor %} {% if request.user.is_authenticated %}
                         <div class="add-comment">
                             <header>
                                 <h3 class="h6">Leave a reply</h3>
                             </header>
                             <form method="POST" action="." class="commenting-form">
                                 {% csrf_token %}
-                                <div class="row">
-                                    <div class="form-group col-md-12">
+                                <div class="comment-form-wrap pt-5">
+                                    <div class="form-group">
                                         {{ form }}
                                     </div>
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group">
                                         <button type="submit" class="btn btn-secondary">Submit Comment</button>
                                     </div>
                                 </div>
@@ -101,9 +289,115 @@
                         <a href="{% url 'account_login' %}" class="btn btn-primary">Login to comment</a> {% endif %}
                     </div>
                 </div>
+                <!-- END main-content -->
+                <div class="col-md-12 col-lg-4 sidebar">
+                    <div class="sidebar-box">
+                        <div class="bio text-center">
+                            <img src="{{ post.author.profile_picture.url }}" alt="Image Placeholder" class="img-fluid mb-5">
+                            <div class="bio-body">
+                                <h2>{{ post.author.user.username }}</h2>
+                                {% if post.author.designation != none %}
+                                <p>{{ post.author.designation }}</p>
+                                {% endif %}
+                                {% if post.author.bio != none %}
+                                <p class="mb-4">{{ post.author.bio }}</p>
+                                {% endif %}
+                                <p><a href="{% url 'userdetail' post.author.user.pk %}" class="btn btn-primary btn-sm rounded px-4 py-2">View Profile</a></p>
+                                <!-- <p class="social">
+                                    <a href="#" class="p-2"><span class="fa fa-facebook"></span></a>
+                                    <a href="#" class="p-2"><span class="fa fa-twitter"></span></a>
+                                    <a href="#" class="p-2"><span class="fa fa-instagram"></span></a>
+                                    <a href="#" class="p-2"><span class="fa fa-youtube-play"></span></a>
+                                </p> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar-box search1">
+                        <h3 class="heading">Search the blog</h3>
+                        <form action="{% url 'search' %}" class="search-form">
+                            <div class="form-group">
+                                <input type="text" name="q" placeholder="What are you looking for?">
+                                <button type="submit" class="submit"><i class="icon-search"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- END sidebar-box -->
+                    <div class="sidebar-box">
+                        <h3 class="heading">Latest Posts</h3>
+                        <div class="post-entry-sidebar">
+                            <ul>
+                                {% for post in most_recent %}
+                                <li>
+                                    <a href="{{ post.get_absolute_url }}">
+                                        <img src="{{ post.thumbnail.url }}" alt="Image placeholder" class="mr-4">
+                                        <div class="text">
+                                            <h4>{{ post.title }}</h4>
+                                            <div class="post-meta">
+                                                <span class="mr-2"><i class="icon-clock"></i> {{ post.timestamp|timesince }} ago</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- END sidebar-box -->
+                    <div class="sidebar-box">
+                        <h3 class="heading">Categories</h3>
+                        <ul class="categories">
+                            {% for cat in category_count %}
+                            <li><a href="#">{{ cat.categories__title }} <span>{{ cat.categories__title__count }}</span></a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <!-- END sidebar-box -->
+                    <div class="sidebar-box m-">
+                        <h3 class="heading">Tags</h3>
+                        <ul class="tags">
+                            {% for tag in post.tags.all %}
+                            <li><a href="{% url 'tagged' tag.slug %}" class="mr-1 badge badge-info">{{ tag }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <!-- END sidebar -->
             </div>
-        </main>
-        {% include 'sidebar.html' with tranding=tranding most_recent=most_recent category_count=category_count %}
-    </div>
+        </div>
+    </section>
 </div>
-{% endblock content %}
+<!-- Modal -->
+<div class="modal fade" id="share" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="shareLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shareLabel">Share</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row shareicon">
+                    <div class="col-md-2">{% post_to_facebook object_or_url "<i class='fa fa-facebook fa-3' aria-hidden='true'></i>" %}</div>
+                    <div class="col-md-2">{% post_to_twitter "New Post: {{post.title}}. Check it out!" object_or_url "<i class='fa fa-twitter fa-3' aria-hidden='true'></i>" %}</div>
+                    <!-- <i class="fa fa-twitter" aria-hidden="true"></i> -->
+                    <!--  -->
+                    <div class="col-md-2">{% post_to_linkedin object_or_url %}</div>
+                    <!--  -->
+                    <div class="col-md-2">
+                        {% send_email object.title "New post: {{object.title}}. Check it out!" object_or_url "<i class='fa fa-envelope fa-3' aria-hidden='true'></i>" %}
+                    </div>
+                    <!-- "<i class='fa fa-envelope fa-3' aria-hidden='true'></i>" -->
+                    <!-- <div class="col-md-2">{% post_to_reddit "New post: {{object.title}}" object_or_url "<i class='fa fa-reddit fa-3' aria-hidden='true'></i>" %}</div> -->
+                    <!--  -->
+                    <div class="col-md-2">{% post_to_telegram "New post: {{object.title}}" object_or_url "<i class='fa fa-telegram fa-3' aria-hidden='true'></i>" %}</div>
+                    <!--  -->
+                    <div class="col-md-2">{% post_to_whatsapp object_or_url "<i class='fa fa-whatsapp fa-3' aria-hidden='true'></i>" %}</div>
+                    <!-- <i class="fa fa-whatsapp" aria-hidden="true"></i> -->
+                    <!--  -->
+                    <!-- <div class="col-md-2">{% save_to_pinterest object_or_url %} {% add_pinterest_script %}</div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock content %}

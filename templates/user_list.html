@@ -1,15 +1,121 @@
-{% extends 'base.html' %} {% load avatar_tags %} {% block title %}People{% endblock %}{% load static %} {% block content %}
+{% extends 'base.html' %} {% load avatar_tags %} {% block title %}People{% endblock %}{% load static %} {% block csslink %}
+<link rel="stylesheet" href="{% static 'vendors/nice-select/css/nice-select.css' %}">
+<style type="text/css">
+.isotope_fillter {
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    margin-bottom: 80px;
+}
 
-<div id="people-list">
-    {% for user in users %}
-    <div class="user text-center ">
-        <a href="{% url 'userdetail' user.pk %}">
-            <img src="{{ user.author.profile_picture.url }}" alt="..." width="80" height="80" class="mx-2 img-fluid rounded-circle">
-        </a>
-        <div class="info">
-            <a href="{% url 'userdetail' user.pk %}">{{ user.username }}</a>
+.isotope_fillter .gallery_filter {
+    text-align: center;
+}
+
+.list {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+.isotope_fillter .gallery_filter li {
+    display: inline-block;
+    border-left: 1px solid #eeeeee;
+    margin-right: -4px;
+}
+
+.isotope_fillter .gallery_filter li:hover a,
+.isotope_fillter .gallery_filter li.active a {
+    background: #fcdc00;
+    -webkit-box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.1);
+}
+
+.isotope_fillter .gallery_filter li a {
+    font-size: 12px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #222222;
+    line-height: 48px;
+    display: inline-block;
+    padding: 0px 30px;
+    margin: 0px;
+}
+
+a {
+    color: #000 !important;
+    text-decoration: none !important;
+    -webkit-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+a,
+area,
+button,
+[role="button"],
+input:not([type="range"]),
+label,
+select,
+summary,
+textarea {
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+}
+
+
+.verified {
+    height: 25px;
+}
+
+.profile {
+    max-width: 150px;
+    height: 150px;
+}
+</style>
+{% endblock csslink %} {% block content %}
+<section class="home_gallery_area p_120">
+    <div class="container">
+        <div class="isotope_fillter align-items-center">
+            <!-- <ul class="gallery_filter list">
+                <li class="active" data-filter="*"><a href="#">All</a></li>
+                <li data-filter=".Architect"><a href="#">Architect</a></li>
+                <li data-filter=".Interior"><a href="#">Interior Designer</a></li>
+                <li data-filter=".Contractor"><a href="#">Contractor</a></li>
+            </ul> -->
+            <form class="form-inline my-2 justify-content-center" method="GET">
+                <input type="text" name="username" id="id_username" class="form-control mr-sm-2 col-6" placeholder="UserName" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
         </div>
     </div>
-    {% endfor %}
-</div>
-{% endblock %}
+    <div class="container box_1620">
+        <div class="gallery_f_inner row imageGallery1">
+            {% for user in users %}
+            <div class="col-lg-3 col-md-4 col-sm-6 {{ user.author.designation }}">
+                <div class="navbar h_gallery_item text-center">
+                    <img src="{{ user.author.profile_picture.url }}" alt="profile picture" class="rounded-circle profile">
+                    <div class="hover">
+                        <a href="{% url 'userdetail' user.pk %}">
+                            <h4>{{ user.username }}
+                                {% if user.author.verified_tick %}<span><img src="{% static 'img/verified.svg' %}" class="verified" alt="verified"></span>
+                                {% endif %}
+                            </h4>
+                        </a>
+                        {% if user.author.designation != none %}
+                        <p>{{ user.author.designation }} </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!--================End Home Gallery Area =================-->
+{% endblock %} {% block script %}
+<script src="{% static 'vendors/isotope/imagesloaded.pkgd.min.js' %}"></script>
+<script src="{% static 'vendors/isotope/isotope-min.js' %}"></script>
+<script src="{% static 'vendors/nice-select/js/jquery.nice-select.min.js' %}"></script>
+<script src="{% static 'vendors/owl-carousel/owl.carousel.min.js' %}"></script>
+{% endblock script %}

@@ -27,9 +27,13 @@ urlpatterns = [
     path('post/<pk>/update/', PostUpdateView.as_view(), name='post-update'),
     # path('post/<id>/delete/', post_delete, name='post-delete'),
     path('post/<pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+    path('tag/<slug:slug>/', tagged, name="tagged"),
+
     path('tinymce/', include('tinymce.urls')),
     path('accounts/', include('allauth.urls')),
     path('contact/', contactView, name='contact'),
+    path('accounts/signup/userinfo/', userinfoview, name='userinfo'),
+
     # path('profile/', views.profile, name='profile'), template_name="account/password_change.html"
     path('accounts/password_change/',
     auth_views.PasswordChangeView.as_view(template_name="account/password_change.html"),
@@ -42,12 +46,14 @@ urlpatterns = [
     path('accounts/reset_password_done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'), 
     path('accounts/reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('accounts/reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-
+    # url('all/userdetail/(?P<pk>[0-9]+)/', views.SingupDetail.as_view(), name='singupdetail'),
     url('userdetail/(?P<pk>[0-9]+)/', views.UserDetail.as_view(), name='userdetail'),
     url('user/follow/(?P<pk>[0-9]+)/', views.UserFollow.as_view(), name='user_follow'),
     url(r'^profile/(?P<username>\w+)/$',user_views.profile,name='profile'),
-    url(r'^accounts/signup/home/profile/(?P<username>\w+)/$',user_views.profile,name='signup_profile'),
-    url('users/', views.UserListView.as_view(), name='users_list')
+    # url('users/', views.UserListView.as_view(), name='users_list') userlistview
+    url('users/',user_views.userlistview,name='users_list'),
+    url('admin/list/',user_views.userslist,name='userslist')
+
 
 
 ]

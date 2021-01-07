@@ -1,233 +1,338 @@
-{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-12">
-            <div class="card card-profile">
-                <div class="card-body text-center">
-                    <img class="rounded-circle img-fluid" width="100" height="100" src="{{ user.author.profile_picture.url }}">
-                    <h3 class="mb-3">{{person.username}}</h3>
-                    {% with total_followers=person.followers.count %}
-                    <h4 class="text-primary">
-                        <span>{{ total_followers }}</span> follower{{ total_followers|pluralize }}
-                    </h4>
-                    {% endwith %}
+{% extends 'base.html' %} {% load static %} {% load crispy_forms_tags %} {% block title %}Profile{% endblock %}{% load static %} {% block csslink %}
+<style type="text/css">
+.choose_image {
+    height: 44px !important;
+}
+
+.verified {
+    height: 25px;
+}
+
+.profile-info-section {
+    padding: 24px;
+    background: #eaeaea;
+    border-radius: 8px;
+}
+
+.content-section {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+@media (min-width: 768px) {
+    .medium-screens-only {
+        display: block;
+    }
+}
+
+.post {
+    background: #fff;
+}
+
+.city {
+    text-transform: capitalize;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="{% static 'css/style_profile.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"> {% endblock csslink %} {% block content %} {% load avatar_tags %}
+<div class="main-content">
+    <!-- Header -->
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url({{ user.author.cover_picture.url }}); background-size: cover; background-position: center top;">
+        <!-- Mask -->
+        <span class="mask bg-gradient-default opacity-8"></span>
+        <!-- Header container -->
+        <div class="container-fluid d-flex align-items-center">
+            <div class="row">
+                <div class="col-lg-7 col-md-10">
+                    <!-- <h1 class="display-2 text-white">Hello {% if person.first_name %} {{person.first_name}}</span> {% else %}{{person.username}} {%endif%}</h1> -->
+                    <!-- <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made with your work and manage your projects or assigned tasks</p> -->
                 </div>
             </div>
-            <!-- <div class="card">
-                    <div class="card-body">
-                        <div class="media">
-                            <div class="media-body">
-                                <h4 class="m-0">Bio</h4>
-                                <form class="needs-validation mb-5" method="POST" enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    <div class="row justify-content-center">
-                                        <div class="input-group">
-                                            {{p_form.bio}}
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-success btn-lg btn-block" type="submit">Update bio</button>
-                                </form>
+        </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--7">
+        <div class="row">
+            <div class="col-xl-4 order-xl-1 mb-5 mb-xl-0">
+                <div class="card card-profile shadow">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-3 order-lg-2">
+                            <div class="card-profile-image">
+                                <img src="{{ user.author.profile_picture.url }}" class="rounded-circle">
                             </div>
                         </div>
                     </div>
-                </div> -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">My Profile</h3>
+                    <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                        <!-- <div class="d-flex justify-content-between">
+                            <a href="#" class="btn btn-sm btn-info mr-4">Connect</a>
+                            <a href="#" class="btn btn-sm btn-default float-right">Message</a>
+                        </div> -->
+                    </div>
+                    <div class="card-body pt-0 pt-md-4">
+                        {% with total_followers=person.followers.count %}
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                                    <div>
+                                        <span class="heading">{{ total_followers }} </span>
+                                        <span class="description">Followers</span>
+                                    </div>
+                                    <!-- <div>
+                                        <span class="heading">10</span>
+                                        <span class="description">Photos</span>
+                                    </div>
+                                    <div>
+                                        <span class="heading">89</span>
+                                        <span class="description">Comments</span>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        {% if request.user.pk != person.pk %}
+                        <div class="d-flex justify-content-center my-4">
+                            {% if request.user not in person.followers.all %}
+                            <a href="{% url 'user_follow' person.id %}" data-id="{{ person.id }}" data-action="follow" class="btn btn-sm btn-info mr-4">Follow</a> {% else %}
+                            <a href="{% url 'user_follow' person.id %}" data-id="{{ person.id }}" data-action="follow" class="btn btn-sm btn-default float-right">Unfollow</a> {% endif %}
+                        </div>
+                        {%endif%} {% endwith %}
+                        <div class="text-center" id="userdetail">
+                            <h3>
+                                {{person.username}} <span class="font-weight-light">{% if user.author.verified_tick %}<img src="{% static 'img/verified.svg' %}" class="verified" alt="verified">{% endif %}</span>
+                            </h3>
+                            <div class="h5 font-weight-300">
+                                <i class="ni location_pin mr-2"></i>{% if user.author.city != none %}
+                                <span> {{ user.author.city }} </span> {%endif%}
+                            </div>
+                            <div class="h5 mt-4">
+                                {% if user.author.professionals_check == True %}
+                                <span class=" city"><strong>Profession :</strong> {{ user.author.professionals }}</span> {%endif%}
+                                {% if user.author.student_check == True%}
+                                <span class=" city"><strong>Student :</strong> {{ user.author.student }}  </span>
+                                {%endif%}
+                            </div>
+                            <hr class="my-4"> {% if user.author.bio != none %}
+                            <p>{{ user.author.bio }}</p>
+                            {% endif %}
+                            <section class="content-section profile-info-section medium-screens-only">
+                                <hr class="my-4"> {% if user.author.address != none %}
+                                <p class="info-item location">
+                                    <span> <i class="fa fa-map-marker" aria-hidden="true"></i> {{ user.author.address }},
+                                        {% if user.author.city != none %}
+                                        <span> {{ user.author.city }}, </span> {%endif%} {% if user.author.postal_code != none %}
+                                        <span>{{ user.author.postal_code }}</span> {%endif%}
+                                    </span>
+                                </p>
+                                {%endif%}
+                                <p class="info-item created">
+                                    <span>Member since - {{person.date_joined|date}}</span>
+                                </p>
+                                <hr class="my-4">
+                                <h3 class="">User Details</h3>
+                                <div class="form-group focused">
+                                    <p class="form-control-label" for="input-username">Username - <span><b>{{person.username}}</b></span></p>
+                                    <p class="form-control-label" for="input-username">Email address - <span><b>{{ person.email }}</b></span></p>
+                                    <p class="form-control-label" for="input-username">First name - <span><b>{{ person.first_name }}</b></span></p>
+                                    <p class="form-control-label" for="input-username">Last name - <span><b>{{ person.last_name}}</b></span></p>
+                                    {% if user.author.phone_number != none %}
+                                    <p class="form-control-label" for="input-username">Phone Number - <span><b>+91 {{ user.author.phone_number }}</b></span></p>
+                                    {% endif %} {% if user.author.date_of_birth != none %}
+                                    <p class="form-control-label" for="input-username">Date of Birth - <span><b>{{ user.author.date_of_birth }}</b></span></p>
+                                    {%endif%}
+                                </div>
+                                <hr class="my-4">
+                            </section>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="">
-                        <form class="needs-validation mb-5" method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <label for="firstName">BIO</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-info"></i></span>
-                                        </div>
+            </div>
+            <div class="col-xl-8 order-xl-2">
+                <div class="card shadow">
+                    <div class="card-header bg-white border-0">
+                        {% if request.user.pk == person.pk %}
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">My account</h3>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div id="edit">
+                            <form class="needs-validation mb-5" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <!-- Description -->
+                                <h6 class="heading-small text-muted mb-4">About me</h6>
+                                <div class="pl-lg-4">
+                                    <div class="form-group focused">
+                                        <label>About Me</label>
+                                        <!-- <textarea rows="4" class="form-control form-control-alternative" placeholder="A few words about you ...">A beautiful Dashboard for Bootstrap 4. It is Free and Open Source.</textarea> -->
                                         {{p_form.bio}}
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <label for="firstName">First name</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                <hr class="my-4">
+                                <h6 class="heading-small text-muted mb-4">User information</h6>
+                                <div class="pl-lg-4">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group focused">
+                                                <label class="form-control-label" for="input-first-name">First name</label>
+                                                <!-- <input type="text" id="input-first-name" class="form-control form-control-alternative" placeholder="First name" value="Lucky"> -->
+                                                {{u_form.first_name}}
+                                            </div>
                                         </div>
-                                        <!-- <input type="text" class="form-control" id="firstName" placeholder="" value=""> -->
-                                        <!-- <input type="text" name="first_name" value="Abhijeet" maxlength="30" id="id_first_name"> -->
-                                        {{u_form.first_name}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <label for="lastName">Last name</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                        <div class="col-lg-6">
+                                            <div class="form-group focused">
+                                                <label class="form-control-label" for="input-last-name">Last name</label>
+                                                <!-- <input type="text" id="input-last-name" class="form-control form-control-alternative" placeholder="Last name" value="Jesse"> -->
+                                                {{u_form.last_name}}
+                                            </div>
                                         </div>
-                                        {{u_form.last_name}}
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <label for="username">Email</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-control-label" for="input-email">Email address</label>
+                                                <!-- <input type="email" id="input-email" class="form-control form-control-alternative" placeholder="jesse@example.com"> -->
+                                                {{u_form.email}}
+                                            </div>
                                         </div>
-                                        {{u_form.email}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <label for="Phone Number">Phone Number</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                        <div class="col-lg-6">
+                                            <div class="form-group focused">
+                                                <label class="form-control-label" for="input-username">Phone Number</label>
+                                                <!-- <input type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username" value="lucky.jesse"> -->
+                                                {{p_form.phone_number}}
+                                            </div>
                                         </div>
-                                        {{p_form.phone_number}}
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <label for="address">Date of Birth</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label class="form-control-label" for="input-email">Date of Birth</label>
+                                                <!-- <input type="email" id="input-email" class="form-control form-control-alternative" placeholder="jesse@example.com"> -->
+                                                {{p_form.date_of_birth}}
+                                            </div>
                                         </div>
-                                        {{p_form.date_of_birth}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <label for="address">Choose Image</label>
-                                    <div class="input-group">
-                                        <div csssslass="input-group-prepend">
-                                            <span class="input-group-text"><i class="fa fa-image"></i></span>
+                                        <!-- <div class="col-lg-6">
+                                            <div class="form-group focused">
+                                                <label class="form-control-label" for="id_designation">Designation</label>
+                                                {{p_form.designation}}
+                                            </div>
+                                        </div>-->
+                                    </div> 
+                                        <div class="row justify-content-center">
+                                            <div class="col-lg-6 mb-2">
+                                                <label for="id_profile_picture">Choose Image</label>
+                                                <div class="input-group">
+                                                    <input type="file" name="profile_picture" class="choose_image " accept="image/*" id="id_profile_picture">
+                                                </div>
+                                                <!-- <div class=" form-group custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input " id="cover_picture-clear_id">
+                                                <label class="custom-control-label" for="cover_picture-clear_id">Clear</label>
+                                            </div> -->
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <label for="id_cover_picture">Choose Cover Image</label>
+                                                <div class="input-group">
+                                                    <input type="file" name="cover_picture" class="choose_image " accept="image/*" id="id_cover_picture">
+                                                </div>
+                                                <!-- <div class="form-group">
+                                                <label for="exampleFormControlFile1">{{p_form.cover_picture}}</label>
+                                                <input type="file" name="cover_picture" class="form-control-file choose_image" accept="image/*" id="id_cover_picture">
+                                            </div>-->
+                                            </div>
                                         </div>
-                                        <input type="file" name="profile_picture" class="choose_image " accept="image/*" id="id_profile_picture">
+
+                                        {% if user.author.user_check == False  %}
+                                        <div class="row justify-content-center">
+                                            {% if user.author.professionals_check == True %}
+                                            <div class="col-lg-6 mb-2" id="select1">
+                                                <div class="form-group focused">
+                                                    <label class="form-control-label" for="id_professionals">Professionals</label> {{p_form.professionals}}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            {% if user.author.student_check == True  %}
+                                            <div class="col-lg-6 mb-2"id="select2">
+                                                <div class="form-group focused">
+                                                    <label class="form-control-label" for="id_student">Student</label> {{p_form.student}}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
                                     </div>
-                                </div>
-                            </div>
-                            <hr class="mb-4">
-                            <button class="btn btn-success btn-lg btn-block" type="submit">Update Profile</button>
-                        </form>
+                                    <hr class="my-4">
+                                    <!-- Address -->
+                                    <h6 class="heading-small text-muted mb-4">Contact information</h6>
+                                    <div class="pl-lg-4">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group focused">
+                                                    <label class="form-control-label" for="input-address">Address</label>
+                                                    <!-- <input id="input-address" class="form-control form-control-alternative" placeholder="Home Address" value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09" type="text"> -->
+                                                    {{p_form.address}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group focused">
+                                                    <label class="city form-control-label" for="input-city">City</label>
+                                                    <!-- <input type="text" id="input-city" class="form-control form-control-alternative" placeholder="City" value="New York"> -->
+                                                    {{p_form.city}}
+                                                </div>
+                                            </div>
+                                            <!-- <div class="col-lg-4">
+                                            <div class="form-group focused">
+                                                <label class="form-control-label" for="input-country">Country</label>
+                                                <input type="text" id="input-country" class="form-control form-control-alternative" placeholder="Country" value="United States">
+                                            </div>
+                                        </div> -->
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label" for="input-country">Postal code</label>
+                                                    <!-- <input type="number" id="input-postal-code" class="form-control form-control-alternative" placeholder="Postal code"> -->
+                                                    {{p_form.postal_code}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="mb-4">
+                                    <button class="btn btn-info btn-lg btn-block" type="submit">Update Profile</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!--                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Followers of {{person.username}}</h3>
-                    </div>
-                    <div class="card-body">
-                        {%for followers in person.follower_set.all%}
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <a href="{%url 'profile' followers.follower_user%}" class="text-default"><label class="form-label">{{followers.follower_user}}</label></a>
-                                </div>
-                            </div>
-                        </div>
-                        {%endfor%}
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{person.username}} is following</h3>
-                    </div>
-                    <div class="card-body">
-                        {%for following in person.following_set.all%}
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <a href="{%url 'profile' following.following_user%}" class="text-default"><label class="form-label">{{following.following_user}}</label></a>
-                                </div>
-                            </div>
-                        </div>
-                        {%endfor%}
-                    </div>
-                </div>
-                {%if u_form or p_form%}
-                <form class="card" action="" method="post" enctype="multipart/form-data">
-                    <div class="card-body p-6">
-                        <div class="card-title">Update Profile info</div>
-                        {%csrf_token%}
-                        {{u_form|crispy}}
-                        {{p_form|crispy}}
-                        <div class="form-footer">
-                            <button name="Update" type="submit" class="btn btn-primary btn-block">Update</button>
-                        </div>
-                    </div>
-                </form>
-                {%endif%} -->
         </div>
-        <!-- <div class="col-lg-8">
-                <div>
-                    <a href="{% url 'post-create' %}" type="button" class="btn btn-success btn-lg btn-block">Create</a>
-                </div>
-                {% for post in queryset %}
-                <div class="pb-2">
-                    <div class="card">
-                        <div class="py-2">
-                            <div class="post col">
-                                <div class="post-thumbnail">
-                                    <a href="{{ posts.get_absolute_url }}"><img src="{{ posts.thumbnail.url }}" alt="..." class="img-fluid"></a>
-                                </div>
-                                <div class="post-details">
-                                    <div class="post-meta d-flex justify-content-between">
-                                        <div class="category">
-                                            {% for cat in posts.categories.all %}
-                                            <a href="#">{{ cat }}</a> {% endfor %}
-                                        </div>
-                                    </div>
-                                    <a href="{{ posts.get_absolute_url }}">
-                                        <h3 class="h4">{{ posts.title }}</h3>
-                                    </a>
-                                    <p class="text-muted">{{ posts.overview }}</p>
-                                    <footer class="post-footer d-flex align-items-center">
-                                        <a href="#" class="author d-flex align-items-center flex-wrap">
-                                            <div class="avatar"><img src="{{ posts.author.profile_picture.url }}" alt="..." class="img-fluid"></div>
-                                            <div class="title"><span>{{ posts.author.user.username }}</span></div>
-                                        </a>
-                                        <div class="date"><i class="icon-clock"></i>{{ posts.timestamp|timesince }} ago</div>
-                                        <div class="comments meta-last"><i class="icon-comment"></i>{{ posts.comment_count }}</div>
-                                    </footer>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div> -->
     </div>
 </div>
-</div>
+{% endblock %} {% block script %}
+<!-- <script type="text/javascript">
+function edit_profile() {
+  document.getElementById("posts").style.display = "none";
+  document.getElementById("edit").style.display = "block";
+
+}
+</script> -->
 <script>
-    var form_fields = document.getElementsByTagName('input')
-        // form_fields[1].placeholder='First Name';
-        // form_fields[2].placeholder='Last Name';
-        // form_fields[3].placeholder='User Name';
-        // form_fields[4].placeholder='Email Address';
-        // form_fields[5].placeholder='Enter Password';
-        // form_fields[6].placeholder='Re-enter Password';
+var form_fields = document.getElementsByTagName('input')
+var form_designation = document.getElementsByTagName('select')
+// form_fields[1].placeholder='First Name';
+// form_fields[2].placeholder='Last Name';
+// form_fields[3].placeholder='User Name';
+// form_fields[4].placeholder='Email Address';
+// form_fields[5].placeholder='Enter Password';
+// form_fields[6].placeholder='Re-enter Password';
 
 
-    for (var field in form_fields) {
-        form_fields[field].className += 'form-control'
-    }
+for (var field in form_fields) {
+    form_fields[field].className += 'form-control form-control-alternative'
+}
+for (var field in form_designation) {
+    form_designation[field].className += 'selectmultiple input is-medium form-control form-control-alternative'
+}
+
+
 </script>
-<style type="text/css">
-    .choose_image {
-        height: 44px !important;
-    }
-</style>
-{% endblock content %}
+{% endblock script %}

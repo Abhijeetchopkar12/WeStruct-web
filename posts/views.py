@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Count, Q
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -7,6 +8,7 @@ from django.views.generic import View, ListView, DetailView, CreateView, UpdateV
 from .forms import CommentForm, PostForm, UserUpdate, ProfileUpdate, ContactForm
 from .models import Post, Author, PostView, User, Contact
 from marketing.forms import EmailSignupForm
+from .filters import UserFilter, AuthorFilter
 from marketing.models import Signup
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -14,17 +16,65 @@ import datetime
 from django.views import generic
 from actions.utils import create_action
 from django.core.mail import send_mail, BadHeaderError
-
+from taggit.models import Tag
 
 
 form = EmailSignupForm()
 
-class UserListView(generic.ListView):
-    template_name = 'user_list.html'
-    context_object_name = 'users'
+@login_required
+def userinfoview(request):
+    u_form = UserUpdate(request.POST, instance= request.user)
+    p_form = ProfileUpdate(request.POST, request.FILES, instance=request.user.author)
+    if u_form.is_valid() and p_form.is_valid():
+        u_form.save()
+        p_form.save()
+        return redirect('/')
+        messages.success(request,f'Your Profile has been created')
+    context = {
+        'u_form':u_form,
+        'p_form':p_form,}
+    return render(request, 'account/userinfo.html', context)
 
-    def get_queryset(self):
-        return User.objects.all()
+
+
+def tagged(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    common_tags = Post.tags.most_common()[:4]
+    posts = Post.objects.filter(tags=tag)
+    context = {
+        'tag':tag,
+        'common_tags':common_tags,
+        'posts':posts,
+    }
+    return render(request, 'tages.html', context)
+
+
+@login_required
+def userlistview(request):
+
+    users = User.objects.all()
+    # authors = Author.objects.all()
+    userfilter = UserFilter(request.GET, queryset=users)
+    users = userfilter.qs
+    # authorfilter = AuthorFilter(request.GET, queryset=users)
+    # users = authorfilter.qs
+
+    context = {
+        'users':users,
+        # 'author':author,
+        'userfilter':userfilter,
+        # 'authorfilter':authorfilter
+    }
+    
+    return render(request, 'user_list.html', context)
+
+# class UserListView(generic.ListView):
+#     template_name = 'user_list.html'
+#     context_object_name = 'users'
+
+#     def get_queryset(self):
+#         return User.objects.all()
+        
 
 class UserDetail(generic.DetailView):
     context_object_name = "person"
@@ -62,6 +112,20 @@ class UserFollow(generic.RedirectView):
                                               user_to=celeb)
                 create_action(self.request.user, 'is now following', celeb)
         return url_
+
+
+
+def userslist(request):
+    users = User.objects.all()
+    
+    context={
+        'users':users
+    }
+    
+    return render(request, 'users-list.html', context)
+
+
+
 
 @login_required
 def profile(request, username):
@@ -117,6 +181,7 @@ def profile(request, username):
             }
         
     return render(request, 'profile.html', context)
+    
 
 def contactView(request):
     if request.method == 'POST':
@@ -127,19 +192,7 @@ def contactView(request):
         form = ContactForm()
     return render(request, "contact.html", {'form': form})
 
-# @login_required
-# def profile_update(request):
-#     if request.method == 'POST':
-#         u_form = UserUpdate(request.POST, instance= request.user)
-#         p_form = ProfileUpdate(request.POST, request.FILES, instance=request.user.author)
-#         if u_form.is_valid() and p_form.is_valid():
-#             u_form.save()
-#             p_form.save()
-#         return redirect('profile')
-#     else:
-#         u_form = UserUpdate(instance=request.user)
-#         p_form = ProfileUpdate(instance=request.user.author)
-#     return render(request, 'profile_update.html', {'u_form':u_form, 'p_form':p_form})
+
 
 def get_user(username):
     qs = User.objects.filter(username=username)
@@ -194,9 +247,10 @@ def get_category_count():
 class IndexView(View):
     form = EmailSignupForm()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs ):
         featured = Post.objects.filter(featured=True)
         latest = Post.objects.order_by('-timestamp')[0:3]
+
         context = {
             'object_list': featured,
             'latest': latest,
@@ -212,61 +266,27 @@ class IndexView(View):
         messages.info(request, "Successfully subscribed")
         return redirect("home")
 
-# def home(request, username = None):
 
-#     if username:
-#         author = User.objects.get(username=username)
-#         posts = Post.objects.filter(author=author)
-#     else:
-#         posts = Post.objects.all()
+    def index(request):
+        tag = get_object_or_404(Tag, slug=slug)
+        featured = Post.objects.filter(featured=True)
+        latest = Post.objects.order_by('-timestamp')[0:3]
 
-#     posts = posts.order_by('-Date')
-#     context = {'posts': posts,}
-#     return render(request, 'index.html', context)
+        if request.method == "POST":
+            email = request.POST["email"]
+            new_signup = Signup()
+            new_signup.email = email
+            new_signup.save()
 
-def index(request):
-    featured = Post.objects.filter(featured=True)
-    latest = Post.objects.order_by('-timestamp')[0:3]
+        context = {
+            'posts': posts,
+            'object_list': featured,
+            'latest': latest,
+            'tag':tag,
+            'form': form
+        }
+        return render(request, 'index.html', context)
 
-    if request.method == "POST":
-        email = request.POST["email"]
-        new_signup = Signup()
-        new_signup.email = email
-        new_signup.save()
-
-    context = {
-        'posts': posts,
-        'object_list': featured,
-        'latest': latest,
-        'form': form
-    }
-    return render(request, 'index.html', context)
-
-
-
-class PostCreateView(CreateView):
-    model = Post
-    template_name = 'post_create.html'
-    form_class = PostForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Create'
-        return context
-   
-
-    def form_valid(self, form):
-        form.instance.author = get_author(self.request.user)
-        form.instance.user_author = get_author(self.request.user)
-        form.save()
-
-        return redirect(reverse("post-detail", kwargs={
-            'pk': form.instance.pk
-        }))
-
-    # def form_valid(self, form):
-    #     form.instance.user_author = self.request.user
-    #     return super(PostCreateView, self).form_valid(form) 
 
 
 class PostListView(ListView):
@@ -287,6 +307,7 @@ class PostListView(ListView):
         return context
 
 def post_list(request):
+    tag = get_object_or_404(Tag, slug=slug)
     weeek_ago = datetime.date.today() - datetime.timedelta(days=7)
     trending = Post.objects.filter(Date__get = weeek_ago).order_by('-rating')
     category_count = get_category_count()
@@ -303,12 +324,13 @@ def post_list(request):
         paginated_queryset = paginator.page(paginator.num_pages)
 
     context = {
-        'queryset': paginated_queryset,
-        'trending': trending[:5],
-        'most_recent': most_recent,
-        'page_request_var': page_request_var,
-        'category_count': category_count,
-        'form': form
+    'tag':tag,
+    'queryset': paginated_queryset,
+    'trending': trending[:5],
+    'most_recent': most_recent,
+    'page_request_var': page_request_var,
+    'category_count': category_count,
+    'form': form
     }
     return render(request, 'blog.html', context)
 
@@ -318,6 +340,9 @@ class PostDetailView(DetailView):
     template_name = 'post.html'
     context_object_name = 'post'
     form = CommentForm()
+
+    def get_user(self):
+        return User.objects.all()
 
     def get_object(self, **kwargs):
         obj = super().get_object()
@@ -334,6 +359,7 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['most_recent'] = most_recent
         context['page_request_var'] = "page"
+
         context['category_count'] = category_count
         context['form'] = self.form
         return context
@@ -359,7 +385,7 @@ def post_detail(request, id):
 
     if request.user.is_authenticated:
         PostView.objects.get_or_create(user=request.user, post=post)
-
+    
     form = CommentForm(request.POST or None)
     if request.method == "POST":
         if form.is_valid():
@@ -370,6 +396,7 @@ def post_detail(request, id):
                 'id': post.pk
             }))
     context = {
+        
         'trending':trending,
         'post': post,
         'most_recent': most_recent,
@@ -377,6 +404,9 @@ def post_detail(request, id):
         'form': form
     }
     return render(request, 'post.html', context)
+
+
+
 
 
 class PostCreateView(CreateView):
@@ -408,11 +438,14 @@ def post_create(request):
         if form.is_valid():
             form.instance.author = author
             form_user.instance.user = user
+
             form.save()
             form_user.save()
+            
             return redirect(reverse("post-detail", kwargs={
                 'id': form.instance.id
             }))
+            
     context = {
         'title': title,
         'form': form,
