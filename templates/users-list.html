@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% load avatar_tags %} {% block title %}People{% endblock %}{% load static %} {% block content %}
+<div class="my-3">
+    <div class="container">
+        <div class="row">
+            <div id="people-list">
+                {% for user in users %}
+                <a href="{% url 'userdetail' user.pk %}">
+                    <div class="user text-center card m-2 ">
+                        <a href="{% url 'userdetail' user.pk %}">
+                            <img src="{{ user.author.profile_picture.url }}" alt="..." width="80" height="80" class="mx-2 img-fluid rounded-circle">
+                        </a>
+                        <div class="info">
+                            <a href="{% url 'userdetail' user.pk %}">{{ user.username }}</a>
+                            <p>{{ user.author.designation }} </p>
+                            <div class="text-center">
+                                {% if user.is_authenticated %}
+                                <p><span class="rounded-pill text-white bg-success">
+                                    online
+                                </span></p>
+                                {% endif %}
+                            </div> 
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

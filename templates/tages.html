@@ -1,0 +1,62 @@
+{% extends 'base.html' %} {% load static %}{% block csslink %}
+<link rel="stylesheet" href="{% static 'css/style_blog.css' %}">
+
+<style>
+    body {
+        font-family: 'Josefin Sans', sans-serif;
+        scroll-behavior: smooth !important;
+        color: black !important;
+    }
+    
+    section.hero .container {
+        padding: 0px 0px !important;
+    }
+</style>
+
+{% endblock csslink %} {% block content %}
+<section class="hero my-3">
+    <div class="hero-body">
+        <div class="container">
+            <h1 style="font-size: 20px;" class="badge badge-success">{{ tag }}</h1>
+        </div>
+    </div>
+</section>
+
+
+<!-- post start -->
+<div class="site-section bg-white">
+    <div class="container">
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-lg-4 mb-4">
+                <div class="entry2">
+                    <a href="{{ post.get_absolute_url }}"><img src="{{ post.thumbnail.url }}" float="left" alt="Thumbnail Image" class="img-fluid rounded "></a>
+                    <div class="excerpt post-details my-2">
+                            <div class="post-meta d-flex justify-content-between">
+                                <div class="date"> <i class="icon-clock"></i> {{ post.timestamp|timesince }} ago</div>
+                                <div class="category">
+                                    {% for cat in post.categories.all %}
+                                    <a href="#">{{ cat }}</a> {% endfor %}
+                                </div>
+                            </div>
+                            <h2><a href="{% url 'post-detail' post.pk %}">{{ post.title }}.</a></h2>
+                            <div style="display:flex">
+                                {% for tag in post.tags.all %}
+                                <a href="{% url 'tagged' tag.slug %}" class="mr-1 badge badge-info">{{ tag }}</a> {% endfor %}
+                            </div>
+                            <div class="post-meta align-items-center text-left clearfix">
+                                <figure class="author-figure mb-0 mr-3 float-left"><img src="{{ post.author.profile_picture.url }}" alt="Image" class="img-fluid"></figure>
+                                <span class="d-inline-block mt-1">By <a href="{% url 'userdetail' post.author.user.pk %}">{{ post.author }}</a></span>
+                                <span><i class=" ml-1 icon-comment"></i>{{ post.comment_count }}</span>
+                            </div>
+                            <p>{{ post.overview|linebreaks|truncatechars:200 }}.</p>
+                            <p class="text-primary"><a href="{% url 'post-detail' post.pk %}">Read More</a></p>
+                        </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- post end -->
+{% endblock content %}
